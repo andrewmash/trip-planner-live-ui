@@ -1,18 +1,30 @@
-$('.panel-body:first button:first').on('click', function() {
-	var hotelName = $('.panel-body:first select:first')[0].value;
+$('#addHotelButton').on('click', function() {
+	// var hotelName = $('.panel-body:first select:first')[0].value;
+	var hotelName = $('#hotelSelector')[0].value;
 	var hotel = getHotel(hotelName);
 
 	var itineraryStr = '<div class="itinerary-item"><span class="title">';
 	itineraryStr += hotelName;
     itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
 
-	$('.panel-body:last ul:first').append(itineraryStr);
-
-	$('.panel-body:last ul:first div:first').data('hotel', hotel);
-
-	console.log($('.panel-body:last ul:first div:first').data('hotel'));
+    var $itinElem = $(itineraryStr).data('hotel', hotel);
+	$('#hotelOutput').append($itinElem);
 
 	redraw_gmaps(hotel.place[0].location);
+});
+
+$('#addRestaurantButton').on('click', function() {
+	var restaurantName = $('#restaurantSelector')[0].value;
+	var restaurant = getRestaurant(restaurantName);
+
+	var itineraryStr = '<div class="itinerary-item"><span class="title">';
+	itineraryStr += restaurantName;
+    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
+
+	var $itinElem = $(itineraryStr).data('restaurant', restaurant);
+	$('#restaurantOutput').append($itinElem);
+
+	redraw_gmaps(restaurant.place[0].location);
 });
 
 function redraw_gmaps(hotelLocation, restaurantLocations, activityLocations) {
@@ -69,8 +81,17 @@ function getHotel(name) {
 	var output;
 	hotels.forEach(function(hotel) {
 		if (hotel.name === name) {
-			console.log("Found a match!");
 			output = hotel;
+		}
+	});
+	return output;
+}
+
+function getRestaurant(name) {
+	var output;
+	restaurants.forEach(function(restaurant) {
+		if (restaurant.name === name) {
+			output = restaurant;
 		}
 	});
 	return output;

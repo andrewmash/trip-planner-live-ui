@@ -15,21 +15,21 @@
         <div class="panel-body">
           <div>
             <h4>Hotels</h4>
-            <select>
+            <select id = 'hotelSelector' >
               {% for hotel in all_hotels %}
               <option>{{ hotel.name }}</option>
               {% endfor %}
             </select>
-            <button class="btn btn-primary btn-circle pull-right">+</button>
+            <button class="btn btn-primary btn-circle pull-right" id="addHotelButton">+</button>
           </div>
           <div>
             <h4>Restaurants</h4>
-            <select>
+            <select id = 'restaurantSelector'>
               {% for restaurant in all_restaurants %}
               <option>{{ restaurant.name }}</option>
               {% endfor %}
             </select>
-            <button class="btn btn-primary btn-circle pull-right">+</button>
+            <button class="btn btn-primary btn-circle pull-right" id="addRestaurantButton"=>+</button>
           </div>
           <div>
             <h4>Activities</h4>
@@ -38,7 +38,7 @@
               <option>{{ activity.name }}</option>
               {% endfor %}
             </select>
-            <button class="btn btn-primary btn-circle pull-right">+</button>
+            <button class="btn btn-primary btn-circle pull-right" id="addActivitiesButton">+</button>
           </div>
         </div>
       </div>
@@ -60,12 +60,12 @@
         <div class="panel-body">
           <div>
             <h4>My Hotel</h4>
-            <ul class="list-group">
+            <ul class="list-group" id = "hotelOutput">
             </ul>
           </div>
           <div>
             <h4>My Restaurants</h4>
-            <ul class="list-group">
+            <ul class="list-group" id = "restaurantOutput">
             </ul>
           </div>
           <div>
