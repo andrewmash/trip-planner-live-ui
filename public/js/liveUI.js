@@ -62,15 +62,19 @@ $('#addActivitiesButton').on('click', function() {
 	}
 });
 
-$('addDay').on('click', function() {
-	var dayCount = $('.day-buttons').length;
-	console.log(dayCount);
+$('#addDay').on('click', function() {
+	var dayCount = $('.day-buttons').children().length - 1;
+	var newDay = '<button class="btn btn-circle day-btn"';
+	newDay += ' id=' + (dayCount + 1) + '>';
+	newDay += +(dayCount + 1) + '</button>';
+	$(this).before(newDay);
 });
+
+
 
 $('#output').on('click', 'button', function() {
 	$(this).parent().remove();
 	redraw_gmaps();
-
 });
 
 function redraw_gmaps() {
@@ -173,3 +177,8 @@ function getActivity(name) {
 	});
 	return output;
 }
+
+$(document).ready(function() {
+  $(body).data("0", $('.panel-body:last').clone());
+  $(body).data("activeDay", 1);
+});
