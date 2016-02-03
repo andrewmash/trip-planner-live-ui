@@ -1,33 +1,99 @@
 $('#addHotelButton').on('click', function() {
 	// var hotelName = $('.panel-body:first select:first')[0].value;
-	var hotelName = $('#hotelSelector')[0].value;
-	var hotel = getHotel(hotelName);
+	if ($('#hotelOutput').has("div").length) alert("You already have a hotel for this day.");
+	else {
+		var hotelName = $('#hotelSelector')[0].value;
+		var hotel = getHotel(hotelName);
 
-	var itineraryStr = '<div class="itinerary-item"><span class="title">';
-	itineraryStr += hotelName;
-    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
+		var itineraryStr = '<div class="itinerary-item"><span class="title">';
+		itineraryStr += hotelName;
+	    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
 
-    var $itinElem = $(itineraryStr).data('hotel', hotel);
-	$('#hotelOutput').append($itinElem);
+	    var $itinElem = $(itineraryStr).data('hotel', hotel);
+		$('#hotelOutput').append($itinElem);
 
-	redraw_gmaps(hotel.place[0].location);
+		redraw_gmaps();
+	}
 });
 
 $('#addRestaurantButton').on('click', function() {
 	var restaurantName = $('#restaurantSelector')[0].value;
-	var restaurant = getRestaurant(restaurantName);
 
-	var itineraryStr = '<div class="itinerary-item"><span class="title">';
-	itineraryStr += restaurantName;
-    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
+	var existingNames = [];
+	var $restList = $('#restaurantOutput > div');
+	for (var i = 0; i < $restList.length; i++) {
+  		existingNames.push($($restList[i]).data('restaurant').name);
+  	}
 
-	var $itinElem = $(itineraryStr).data('restaurant', restaurant);
-	$('#restaurantOutput').append($itinElem);
+  	if  (existingNames.indexOf(restaurantName) === -1) {
+		var restaurant = getRestaurant(restaurantName);
 
-	redraw_gmaps(restaurant.place[0].location);
+		var itineraryStr = '<div class="itinerary-item"><span class="title">';
+		itineraryStr += restaurantName;
+	    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
+
+		var $itinElem = $(itineraryStr).data('restaurant', restaurant);
+		$('#restaurantOutput').append($itinElem);
+
+		redraw_gmaps();
+	}
 });
 
-function redraw_gmaps(hotelLocation, restaurantLocations, activityLocations) {
+$('#addActivitiesButton').on('click', function() {
+	var activityName = $('#activitySelector')[0].value;
+	
+	var existingNames = [];
+	var $actList = $('#activityOutput > div');
+	for (var i = 0; i < $actList.length; i++) {
+  		existingNames.push($($actList[i]).data('activity').name);
+  	}
+
+  	if (existingNames.indexOf(activityName) === -1) {
+		var activity = getActivity(activityName);
+
+		var itineraryStr = '<div class="itinerary-item"><span class="title">';
+		itineraryStr += activityName;
+	    itineraryStr += '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>';
+
+		var $itinElem = $(itineraryStr).data('activity', activity);
+		$('#activityOutput').append($itinElem);
+
+		redraw_gmaps();
+	}
+});
+
+$('addDay').on('click', function() {
+	var dayCount = $('.day-buttons').length;
+	console.log(dayCount);
+});
+
+$('#output').on('click', 'button', function() {
+	$(this).parent().remove();
+	redraw_gmaps();
+
+});
+
+function redraw_gmaps() {
+
+  var hotelLocation;
+  var restaurantLocations = [];
+  var activityLocations = [];
+
+  var hotel = $('#hotelOutput > div');
+  if (hotel.data('hotel')) {
+  	hotelLocation = hotel.data('hotel').place[0].location;
+  }
+  
+  var $restList = $('#restaurantOutput > div');
+  var $activityList = $('#activityOutput > div');
+
+  for (var i = 0; i < $restList.length; i++) {
+  	restaurantLocations.push($($restList[i]).data('restaurant').place[0].location);
+  }
+
+  for (var j = 0; j < $activityList.length; j++) {
+  	activityLocations.push($($activityList[j]).data('activity').place[0].location);
+  }
 
   // initialize new google maps LatLng object
   var myLatlng = new google.maps.LatLng(40.705189, -74.009209);
@@ -61,20 +127,21 @@ function redraw_gmaps(hotelLocation, restaurantLocations, activityLocations) {
     opts.map = map;
     var marker = new google.maps.Marker(opts);
   }
-
-  drawLocation(hotelLocation, {
-    icon: '/images/lodging_0star.png'
+  if (hotel.data('hotel')) {
+	  drawLocation(hotelLocation, {
+	    icon: '/images/lodging_0star.png'
+	  });
+	}
+  restaurantLocations.forEach(function(loc) {
+    drawLocation(loc, {
+      icon: '/images/restaurant.png'
+    });
   });
-  // restaurantLocations.forEach(function(loc) {
-  //   drawLocation(loc, {
-  //     icon: '/images/restaurant.png'
-  //   });
-  // });
-  // activityLocations.forEach(function(loc) {
-  //   drawLocation(loc, {
-  //     icon: '/images/star-3.png'
-  //   });
-  // });
+  activityLocations.forEach(function(loc) {
+    drawLocation(loc, {
+      icon: '/images/star-3.png'
+    });
+  });
 }
 
 function getHotel(name) {
@@ -92,6 +159,16 @@ function getRestaurant(name) {
 	restaurants.forEach(function(restaurant) {
 		if (restaurant.name === name) {
 			output = restaurant;
+		}
+	});
+	return output;
+}
+
+function getActivity(name) {
+	var output;
+	activities.forEach(function(activity) {
+		if (activity.name === name) {
+			output = activity;
 		}
 	});
 	return output;
