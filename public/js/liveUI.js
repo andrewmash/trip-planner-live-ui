@@ -63,18 +63,34 @@ $('#addActivitiesButton').on('click', function() {
 });
 
 $('#addDay').on('click', function() {
-	var dayCount = $('.day-buttons').children().length - 1;
-	var newDay = '<button class="btn btn-circle day-btn"';
-	newDay += ' id=' + (dayCount + 1) + '>';
-	newDay += +(dayCount + 1) + '</button>';
-	$(this).before(newDay);
+		var dayCount = $('.day-buttons').children().length - 1;
+		var newDay = '<button class="btn btn-circle day-btn numbered"';
+		newDay += ' id=' + (dayCount + 1) + '>';
+		newDay += +(dayCount + 1) + '</button>';
+		$(this).before(newDay);
 });
 
+$('.day-buttons').on('click', '.numbered', function() {
+	var activeDay = $('body').data('activeDay');
+	var newDay = $(this).text();
+	var $oldPanel = $('.panel-body:last').clone();
+	$('body').data(activeDay.toString(), $oldPanel);
+	console.log($('body').data(newDay.toString()));
+	if ($('body').data(newDay.toString())) {
+		$('.panel-body:last').replaceWith($('body').data(newDay.toString()));
+	} else {
+		$('.panel-body:last').replaceWith($('body').data('0'));
+	}
+	$('body').data('activeDay', newDay);
+});
 
 
 $('#output').on('click', 'button', function() {
 	$(this).parent().remove();
 	redraw_gmaps();
+});
+
+$('.remove').on('click', function() {
 });
 
 function redraw_gmaps() {
@@ -179,6 +195,6 @@ function getActivity(name) {
 }
 
 $(document).ready(function() {
-  $(body).data("0", $('.panel-body:last').clone());
-  $(body).data("activeDay", 1);
+  $('body').data("0", $('.panel-body:last').clone());
+  $('body').data("activeDay", 1);
 });
